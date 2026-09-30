@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SentinelAI — Continuous Behavioral Authentication</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+    <!-- ================================================================= -->
+    <!-- Top Navigation Bar                                                -->
+    <!-- ================================================================= -->
+    <header class="navbar">
+        <div class="nav-brand">
+            <div class="brand-icon">S</div>
+            <span class="brand-title">SentinelAI</span>
+            <span class="brand-badge">Continuous Auth</span>
+        </div>
+        <div class="nav-user" id="nav-user" style="display: none;">
+            <div class="user-badge">
+                <span class="pulse-dot"></span>
+                <span id="user-display-name">User</span>
+            </div>
+            <button id="btn-logout" class="btn btn-secondary btn-sm">Logout</button>
+        </div>
+    </header>
+
+    <!-- Notification Toast Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- ================================================================= -->
+    <!-- Main Content Area (Single Page Application Views)                 -->
+    <!-- ================================================================= -->
+    <main class="main-content">
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- VIEW 1: Login                                                 -->
+        <!-- ------------------------------------------------------------- -->
+        <section id="view-login" class="view-section active">
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>SentinelAI</h1>
+                        <p>Continuous Behavioral Authentication</p>
+                        <div class="auth-demo-subtitle">AI-Powered Keystroke Biometrics & Continuous Risk Assessment</div>
+                    </div>
+                    <form id="form-login">
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Email Address</label>
+                            <input type="email" id="login-email" class="form-input" placeholder="you@example.com" required autocomplete="username">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="login-password">Password</label>
+                            <input type="password" id="login-password" class="form-input" placeholder="••••••••••••" required autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="btn-login-submit">Login</button>
+                    </form>
+                    <div class="auth-footer">
+                        <span>Don't have an account? </span>
+                        <a id="link-to-register">Create Account</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- VIEW 2: Register                                              -->
+        <!-- ------------------------------------------------------------- -->
+        <section id="view-register" class="view-section">
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>Create Account</h1>
+                        <p>Register to establish your behavioral profile</p>
+                        <div class="auth-demo-subtitle">AI-Powered Keystroke Biometrics & Continuous Risk Assessment</div>
+                    </div>
+                    <form id="form-register">
+                        <div class="form-group">
+                            <label class="form-label" for="register-name">Full Name</label>
+                            <input type="text" id="register-name" class="form-input" placeholder="Alex Morgan" required autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="register-email">Email Address</label>
+                            <input type="email" id="register-email" class="form-input" placeholder="alex@example.com" required autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="register-password">Password</label>
+                            <input type="password" id="register-password" class="form-input" placeholder="Minimum 8 characters" required autocomplete="new-password">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="btn-register-submit">Create Account</button>
+                    </form>
+                    <div class="auth-footer">
+                        <span>Already registered? </span>
+                        <a id="link-to-login">Log In</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- VIEW 3: Behavioral Enrollment                                 -->
+        <!-- ------------------------------------------------------------- -->
+        <section id="view-enrollment" class="view-section">
+            <div class="enrollment-container">
+                <div class="enrollment-header">
+                    <h2>Personalized Behavioral Enrollment</h2>
+                    <p class="enrollment-summary">
+                        Your typing rhythm is unique. SentinelAI requires <strong>3 baseline samples</strong> of the same reference phrase to calibrate your personal timing profile.
+                    </p>
+                    <div class="enrollment-steps-callout">
+                        <div class="callout-item"><span class="callout-num">1</span> Type the exact phrase naturally at your normal rhythm.</div>
+                        <div class="callout-item"><span class="callout-num">2</span> Repeat 3 times to establish your statistical biometric baseline.</div>
+                        <div class="callout-item"><span class="callout-num">3</span> Progress advances: Sample 1/3 &rarr; 2/3 &rarr; 3/3.</div>
+                    </div>
+                </div>
+
+                <!-- 3-Sample Progress Step Indicator -->
+                <div class="progress-bar-container">
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="step-node active" id="step-node-1">1</div>
+                    <div class="step-node" id="step-node-2">2</div>
+                    <div class="step-node" id="step-node-3">3</div>
+                </div>
+
+                <!-- Fixed Phrase Reference Display -->
+                <div class="phrase-box">
+                    <div class="phrase-label" id="enroll-sample-label">Sample 1 of 3 — Type This Phrase</div>
+                    <div class="phrase-text" id="phrase-display-text">sentinel ai verifies typing biometrics</div>
+                </div>
+
+                <!-- Typing Input Field -->
+                <div class="form-group">
+                    <label class="form-label" for="enroll-input">Type the phrase below and press Submit or Enter:</label>
+                    <textarea id="enroll-input" class="enroll-textarea" placeholder="Start typing the phrase here..." autocomplete="off" spellcheck="false"></textarea>
+                </div>
+
+                <div class="enroll-metrics-preview">
+                    <span>Keystrokes recorded: <strong id="enroll-key-count">0</strong></span>
+                    <span>Passive Timing Engine: <strong style="color: var(--success-green);">Active</strong></span>
+                </div>
+
+                <!-- Concise Privacy Concept -->
+                <div class="privacy-guarantee-box">
+                    <span>🔒 <strong>Privacy Guarantee:</strong> No typed text is stored. Only behavioral timing features (hold and flight times) are analyzed to calibrate your baseline model.</span>
+                </div>
+
+                <button id="btn-submit-sample" class="btn btn-primary">Submit Sample</button>
+            </div>
+        </section>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- VIEW 4: Security Dashboard Shell                              -->
+        <!-- ------------------------------------------------------------- -->
+        <section id="view-dashboard" class="view-section">
+            <div class="dashboard-header">
+                <div>
+                    <h2>Security Operations Center</h2>
+                    <p>Continuous Behavioral Risk Monitoring for <span id="dash-user-email">user@example.com</span></p>
+                </div>
+                <div class="header-status-area">
+                    <div class="monitoring-indicator" id="monitoring-indicator">
+                        <span class="indicator-dot live" id="indicator-dot"></span>
+                        <span id="indicator-text">LIVE MONITORING</span>
+                    </div>
+                    <div class="last-verification-time" id="dash-last-verification">Last verification: --:--:--</div>
+                </div>
+            </div>
+
+            <!-- Elevated Risk / Reauthentication Warning Banner (Hidden by default) -->
+            <div id="dash-reauth-banner" class="reauth-banner" style="display: none;">
+                <div class="reauth-banner-content">
+                    <span class="reauth-icon">&#9888;</span>
+                    <div>
+                        <strong>Additional Verification Required</strong>
+                        <p>Elevated behavioral anomalies detected. Please complete biometric checkpoint verification to confirm your identity.</p>
+                    </div>
+                </div>
+                <button id="btn-trigger-checkpoint" class="btn btn-warning btn-sm">Verify Identity Now</button>
+            </div>
+
+            <!-- 4 Main Security Metric Cards -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Security Status</div>
+                    <div class="metric-value" id="dash-status-badge">SECURE</div>
+                    <div class="metric-sub" id="dash-status-sub">Session protected by SentinelAI</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Current Risk Level</div>
+                    <div class="metric-value">
+                        <span id="dash-risk-badge" class="metric-badge badge-low">LOW</span>
+                        <span id="dash-risk-score" class="metric-score-label">0.0 / 100</span>
+                    </div>
+                    <div class="metric-sub">Anomaly score within safe baseline</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Behavioral Confidence</div>
+                    <div class="metric-value" id="dash-confidence-value">65%</div>
+                    <div class="metric-sub">Calibrated from enrollment baseline</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Verification Mode</div>
+                    <div class="metric-value" id="dash-verification-mode" style="color: var(--primary-cyan);">LOCAL ML</div>
+                    <div class="metric-sub">Passive Behavioral Analysis</div>
+                </div>
+            </div>
+
+            <!-- Real-Time Continuous Behavioral Verification Panel -->
+            <div class="verification-panel">
+                <div class="panel-header-row">
+                    <div>
+                        <h3>Live Behavioral Anomaly Gauge</h3>
+                        <p>Continuous statistical deviation from your personalized keystroke baseline</p>
+                    </div>
+                </div>
+
+                <!-- Visual Risk Meter Gauge (0 -> 100) -->
+                <div class="risk-gauge-container">
+                    <div class="risk-gauge-track">
+                        <div class="risk-gauge-fill" id="risk-gauge-fill" style="width: 0%;"></div>
+                        <div class="risk-gauge-needle" id="risk-gauge-needle" style="left: 0%;"></div>
+                    </div>
+                    <div class="risk-gauge-markers">
+                        <span class="marker marker-low">0 LOW</span>
+                        <span class="marker marker-med">30 MEDIUM</span>
+                        <span class="marker marker-high">60 HIGH</span>
+                        <span class="marker marker-crit">80 CRITICAL</span>
+                        <span class="marker">100</span>
+                    </div>
+                    <!-- Clear Decision Threshold Legend -->
+                    <div class="gauge-threshold-legend">
+                        <span class="legend-chip chip-low"><span class="chip-dot"></span>0–29: LOW (Normal)</span>
+                        <span class="legend-chip chip-med"><span class="chip-dot"></span>30–59: MEDIUM (Elevated Risk)</span>
+                        <span class="legend-chip chip-high"><span class="chip-dot"></span>60–79: HIGH (Re-Auth Required)</span>
+                        <span class="legend-chip chip-crit"><span class="chip-dot"></span>80–100: CRITICAL (Locked)</span>
+                    </div>
+                </div>
+
+                <!-- Active Sandbox / Live Behavioral Workspace -->
+                <div class="sandbox-container">
+                    <div class="sandbox-instruction-banner">
+                        💡 <strong>Live Evaluation Instructions:</strong> Type naturally in this area. SentinelAI analyzes typing behavior, not the text itself.
+                    </div>
+                    <div class="sandbox-header">
+                        <label for="dash-typing-sandbox" class="sandbox-label">
+                            Continuous Monitoring Input Sandbox:
+                        </label>
+                        <span class="buffer-status" id="dash-buffer-count">
+                            Window buffer: <strong>0 / 25</strong> keystrokes
+                        </span>
+                    </div>
+                    <textarea id="dash-typing-sandbox" class="sandbox-textarea" placeholder="Type naturally here (or anywhere on this page) to generate live keystroke dynamics..."></textarea>
+                    <div class="sandbox-footer">
+                        <div class="privacy-note-badge">
+                            🔒 <strong>Privacy Assured:</strong> No typed text is stored. Only behavioral timing features are analyzed.
+                        </div>
+                        <button id="btn-force-evaluate" class="btn btn-secondary btn-sm">Submit Window Now</button>
+                    </div>
+                </div>
+
+                <!-- Two-Column Operational Details: Top Anomalous Features & Risk History -->
+                <div class="soc-details-grid">
+                    <!-- Column 1: "Why did my risk change?" / Top Anomalous Features -->
+                    <div class="detail-card">
+                        <div class="detail-card-header">
+                            <h4>Why Did My Risk Change?</h4>
+                            <span class="detail-card-sub">Top behavioral deviations</span>
+                        </div>
+                        <div id="dash-anomalous-features-panel" class="anomalous-features-panel">
+                            <div class="empty-deviation-state">
+                                No significant behavioral deviations detected. Typing rhythm matches established baseline.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Recent Risk History Timeline -->
+                    <div class="detail-card">
+                        <div class="detail-card-header">
+                            <h4>Recent Risk History</h4>
+                            <span class="detail-card-sub">Last 10–20 observations</span>
+                        </div>
+                        <div class="history-table-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Score</th>
+                                        <th>Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dash-history-list">
+                                    <tr class="empty-history-row">
+                                        <td colspan="3">Awaiting first feature window...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ------------------------------------------------------------- -->
+        <!-- VIEW 5: Locked / Re-authentication Challenge                  -->
+        <!-- ------------------------------------------------------------- -->
+        <section id="view-locked" class="view-section">
+            <div class="locked-card">
+                <div class="locked-icon">&#128274;</div>
+                <h2>Session Temporarily Locked</h2>
+                <p id="locked-reason-text">SentinelAI detected behavioral anomalies exceeding security thresholds. Please complete re-authentication to restore access.</p>
+
+                <!-- Re-authentication Mode Switch Tabs -->
+                <div class="unlock-tabs">
+                    <button type="button" id="tab-unlock-pwd" class="tab-btn active">Password Unlock</button>
+                    <button type="button" id="tab-unlock-bio" class="tab-btn">Biometric Unlock</button>
+                </div>
+
+                <!-- Form 1: Password Re-authentication -->
+                <form id="form-unlock-password" class="unlock-form">
+                    <div class="form-group text-left">
+                        <label class="form-label" for="unlock-email">Account Email</label>
+                        <input type="email" id="unlock-email" class="form-input" readonly>
+                    </div>
+                    <div class="form-group text-left">
+                        <label class="form-label" for="unlock-password">Password</label>
+                        <input type="password" id="unlock-password" class="form-input" placeholder="Enter your account password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="btn-unlock-password-submit">Unlock Session</button>
+                </form>
+
+                <!-- Form 2: Biometric Checkpoint Re-authentication -->
+                <div id="form-unlock-biometric" class="unlock-form" style="display: none;">
+                    <p class="bio-prompt">Type the verification phrase below with your enrolled typing rhythm:</p>
+                    <div class="phrase-box">
+                        <div class="phrase-text">sentinel ai verifies typing biometrics</div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="unlock-phrase-input" class="enroll-textarea" placeholder="Type the phrase here..."></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="btn-unlock-biometric-submit">Verify Biometrics</button>
+                </div>
+
+                <div class="auth-footer" style="margin-top: 1.5rem;">
+                    <a id="link-locked-logout" style="color: var(--text-muted); cursor: pointer;">Log out of this session</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================================================================= -->
+    <!-- Footer                                                            -->
+    <!-- ================================================================= -->
+    <footer class="footer">
+        <p>SentinelAI &copy; 2026 — AI-Powered Continuous Behavioral Authentication System</p>
+    </footer>
+
+    <!-- Client-Side Scripts -->
+    <script src="/static/js/keystroke.js"></script>
+    <script src="/static/js/typingdna.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
